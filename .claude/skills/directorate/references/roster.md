@@ -4,8 +4,8 @@ Hire the post, not the person. Each entry below is a mandate you paste into the 
 field of a work order, plus what that post is allowed to delegate and how the Chief
 verifies it.
 
-Only hire posts the mission needs. A four-post conclave that ships beats a nine-post
-conclave that coordinates. Add posts when a failure shows you were missing one — that's
+Only hire posts the mission needs. A four-post directorate that ships beats a nine-post
+directorate that coordinates. Add posts when a failure shows you were missing one — that's
 what the ledger is for.
 
 ---

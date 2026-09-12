@@ -1,14 +1,14 @@
 #!/usr/bin/env python3
-"""conclave.py — scaffolding and the lessons ledger for the Conclave skill.
+"""directorate.py — scaffolding and the lessons ledger for the Directorate skill.
 
 Standard library only, no install step. Run from the repo root.
 
-    python .claude/skills/conclave/scripts/conclave.py init
-    python .claude/skills/conclave/scripts/conclave.py brief [--tags a,b] [--limit N]
-    python .claude/skills/conclave/scripts/conclave.py lesson add --text "..." --tag x [--severity high]
-    python .claude/skills/conclave/scripts/conclave.py lesson list [--tag x] [--limit N]
-    python .claude/skills/conclave/scripts/conclave.py lesson digest
-    python .claude/skills/conclave/scripts/conclave.py mission new "<name>"
+    python .claude/skills/directorate/scripts/directorate.py init
+    python .claude/skills/directorate/scripts/directorate.py brief [--tags a,b] [--limit N]
+    python .claude/skills/directorate/scripts/directorate.py lesson add --text "..." --tag x [--severity high]
+    python .claude/skills/directorate/scripts/directorate.py lesson list [--tag x] [--limit N]
+    python .claude/skills/directorate/scripts/directorate.py lesson digest
+    python .claude/skills/directorate/scripts/directorate.py mission new "<name>"
 """
 
 from __future__ import annotations
@@ -34,13 +34,13 @@ for _stream in (sys.stdout, sys.stderr):
 
 
 def _find_root() -> Path:
-    """$CONCLAVE_ROOT if set; else the git repo root; else cwd.
+    """$DIRECTORATE_ROOT if set; else the git repo root; else cwd.
 
     Resolving to cwd alone means running from a subdirectory silently
-    scaffolds or reads a second, disconnected .conclave/ instead of the
+    scaffolds or reads a second, disconnected .directorate/ instead of the
     repo's real one.
     """
-    override = os.environ.get("CONCLAVE_ROOT")
+    override = os.environ.get("DIRECTORATE_ROOT")
     if override:
         return Path(override).resolve()
     try:
@@ -56,7 +56,7 @@ def _find_root() -> Path:
 
 
 ROOT = _find_root()
-BASE = ROOT / ".conclave"
+BASE = ROOT / ".directorate"
 LEDGER = BASE / "ledger" / "lessons.jsonl"
 DIGEST = BASE / "LESSONS.md"
 RULES = BASE / "STANDING-RULES.md"
@@ -118,7 +118,7 @@ def norm(text: str) -> str:
 def require_init() -> bool:
     if BASE.exists():
         return True
-    print("No .conclave/ found. Run: conclave.py init", file=sys.stderr)
+    print("No .directorate/ found. Run: directorate.py init", file=sys.stderr)
     return False
 
 
@@ -133,11 +133,11 @@ def cmd_init(_args) -> int:
     if not RULES.exists():
         RULES.write_text(RULES_SEED, encoding="utf-8")
     if not DIGEST.exists():
-        DIGEST.write_text("# Lessons\n\n_Empty. Run `conclave.py lesson digest`._\n",
+        DIGEST.write_text("# Lessons\n\n_Empty. Run `directorate.py lesson digest`._\n",
                           encoding="utf-8")
-    print(f"conclave ready at {BASE}")
+    print(f"directorate ready at {BASE}")
     print("  STANDING-RULES.md  ledger/lessons.jsonl  missions/")
-    print("Commit .conclave/ — the scar tissue is the valuable part.")
+    print("Commit .directorate/ — the scar tissue is the valuable part.")
     return 0
 
 
@@ -304,7 +304,7 @@ inspect. If you can't verify it, rewrite it.>
 <Budget, stack, what must not change, deploy targets, deadlines.>
 
 ## Out of scope
-<The list that stops the conclave wandering. Be generous.>
+<The list that stops the directorate wandering. Be generous.>
 
 ## Risk register
 <Anything irreversible. Every item here is a human gate.>
@@ -328,11 +328,11 @@ inspect. If you can't verify it, rewrite it.>
 # ---------------------------------------------------------------- cli
 
 def build_parser() -> argparse.ArgumentParser:
-    p = argparse.ArgumentParser(prog="conclave", description=__doc__,
+    p = argparse.ArgumentParser(prog="directorate", description=__doc__,
                                 formatter_class=argparse.RawDescriptionHelpFormatter)
     sub = p.add_subparsers(dest="cmd", required=True)
 
-    sub.add_parser("init", help="scaffold .conclave/").set_defaults(func=cmd_init)
+    sub.add_parser("init", help="scaffold .directorate/").set_defaults(func=cmd_init)
 
     b = sub.add_parser("brief", help="standing rules + relevant lessons")
     b.add_argument("--tags", help="comma-separated tags to filter lessons by")

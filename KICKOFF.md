@@ -9,7 +9,7 @@ the time.
 ## 1. Run a mission
 
 ```
-Load the `conclave` skill and act as Chief for this mission.
+Load the `directorate` skill and act as Chief for this mission.
 
 MISSION: <one paragraph — what must be true when this is finished>
 STACK: <languages, frameworks, hosting, anything already committed to>
@@ -21,7 +21,7 @@ money, publishing publicly, force pushes, deleting anything.
 Do this in order, and don't skip the boring steps — they're the ones that make the rest
 cheap:
 
-1. Run `conclave.py init` and `conclave.py brief`. Read the brief before planning; it
+1. Run `directorate.py init` and `directorate.py brief`. Read the brief before planning; it
    contains what previous missions in this repo learned the hard way.
 2. Write MISSION.md. Every line of the definition of done must be something you can
    verify with a command or an artifact I can inspect. Rewrite anything vague until it's
@@ -43,8 +43,8 @@ cheap:
    something and didn't.
 8. Before the final wave: Security Auditor and Red Team QA in parallel, then fix the
    findings that have a real reproduction.
-9. End with `conclave.py lesson digest`, and forge any cluster of 4+ related rules into
-   a skill using the `skill-forge` skill.
+9. End with `directorate.py lesson digest`, and forge any cluster of 4+ related rules into
+   a skill using the `lesson-forge` skill.
 
 You are the Chief. Don't write the implementation yourself — the moment you start
 patching files you lose the plan and the ability to judge the work with fresh eyes.
@@ -61,10 +61,10 @@ Use when you want it to keep going while you're away. Point it at a mission that
 already been scoped.
 
 ```
-Load the `conclave` skill. Continue mission <slug> autonomously until the definition of
+Load the `directorate` skill. Continue mission <slug> autonomously until the definition of
 done is met or the token budget runs low.
 
-Per wave: re-read `conclave.py brief` (the ledger grows as you go), dispatch, verify,
+Per wave: re-read `directorate.py brief` (the ledger grows as you go), dispatch, verify,
 checkpoint or roll back, record lessons.
 
 Hard stops — do not proceed, leave a note and wait. Same list as any other mission's
@@ -89,7 +89,7 @@ be, and what you'd do differently.
 Use when the *what* is genuinely open.
 
 ```
-Load the `conclave` skill and run a divergence wave on this before we plan anything:
+Load the `directorate` skill and run a divergence wave on this before we plan anything:
 
 QUESTION: <the open decision>
 CONTEXT: <constraints, stack, who it's for>
@@ -108,7 +108,7 @@ all to DECISIONS.md — I don't want to re-litigate this in three weeks.
 ## 4. Audit an existing codebase
 
 ```
-Load the `conclave` skill. This repo already exists; I want it hardened, not rebuilt.
+Load the `directorate` skill. This repo already exists; I want it hardened, not rebuilt.
 
 Wave 1, in parallel, read-only — nobody changes a line of code:
 - Security Auditor: secrets in code, git history and client bundles; authz gaps;
@@ -132,5 +132,5 @@ the fixes.
 - Give the Chief a real definition of done. The single biggest quality difference between
   a good run and a bad one is whether "done" was checkable at the start.
 - Let it roll back. The instinct to rescue a half-broken wave costs more than redoing it.
-- Commit `.conclave/` — it's the part that compounds.
+- Commit `.directorate/` — it's the part that compounds.
 - The ledger is only as good as your willingness to record unflattering things in it.

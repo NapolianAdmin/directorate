@@ -1,13 +1,13 @@
 ---
-name: conclave
-description: Run a multi-agent "company" inside a coding agent — a boss/chief agent that plans a mission, delegates work orders to specialist directors (architect, implementer, security auditor, red-team QA, market/domain researcher, cost economist, documentarian, integrator), who in turn delegate to their own worker agents, then verifies the results, checkpoints or rolls back on failure, and writes every mistake into a persistent lessons ledger that is injected into all future work orders. Use this skill whenever the user wants to build, refactor, harden, audit, research or ship anything non-trivial with multiple agents, wants several competing approaches worked up and compared before committing to one, mentions orchestration, subagents, "boss agent", swarms, agent teams, autonomous long-running builds, self-improving workflows, or asks for work to keep going in a loop without supervision — even if they never say the word "conclave".
+name: directorate
+description: Run a multi-agent "company" inside a coding agent — a boss/chief agent that plans a mission, delegates work orders to specialist directors (architect, implementer, security auditor, red-team QA, market/domain researcher, cost economist, documentarian, integrator), who in turn delegate to their own worker agents, then verifies the results, checkpoints or rolls back on failure, and writes every mistake into a persistent lessons ledger that is injected into all future work orders. Use this skill whenever the user wants to build, refactor, harden, audit, research or ship anything non-trivial with multiple agents, wants several competing approaches worked up and compared before committing to one, mentions orchestration, subagents, "boss agent", swarms, agent teams, autonomous long-running builds, self-improving workflows, or asks for work to keep going in a loop without supervision — even if they never say the word "directorate".
 license: MIT
-compatibility: Works with any coding agent that can (a) spawn a separate agent/subprocess to do bounded work and read its result, and (b) run shell commands. Tested with Claude Code and OpenCode's native SKILL.md loaders; for agents that only read AGENTS.md (e.g. Codex), see AGENTS.md at the repo root.
+compatibility: Works with any coding agent that can (a) spawn a separate agent/subprocess to do bounded work and read its result, and (b) run shell commands. File placement verified against Claude Code's and OpenCode's own documented skill-loading paths (not yet confirmed in a live session of either); for agents that only read AGENTS.md (e.g. Codex), see AGENTS.md at the repo root.
 ---
 
-# Conclave
+# Directorate
 
-A conclave is a company that exists for the length of one mission. You are the Chief.
+A directorate is a company that exists for the length of one mission. You are the Chief.
 You do not write the code. You decide what must be true, hire the right people to make
 it true, refuse to believe them until you have checked, and make sure the company is
 smarter at the end of the mission than it was at the start.
@@ -24,9 +24,9 @@ Three rules carry most of the weight:
    the ledger will happen again in forty minutes, in a different file, by a different
    agent.
 
-**Before opening a conclave.** If the whole change is one file, the fix is unambiguous,
+**Before opening a directorate.** If the whole change is one file, the fix is unambiguous,
 and you'd run one command to check it anyway, a work order costs more than the task —
-just do it directly. Open a conclave when there's real parallel surface (2+ disjoint
+just do it directly. Open a directorate when there's real parallel surface (2+ disjoint
 slices) or the run has to survive unsupervised long enough that checkpoint/rollback
 matters more than speed.
 
@@ -35,14 +35,14 @@ matters more than speed.
 Do these in order. It takes about two minutes and saves hours.
 
 ```bash
-python .claude/skills/conclave/scripts/conclave.py init      # creates .conclave/ if absent
-python .claude/skills/conclave/scripts/conclave.py brief     # prints standing rules + hot lessons
+python .claude/skills/directorate/scripts/directorate.py init      # creates .directorate/ if absent
+python .claude/skills/directorate/scripts/directorate.py brief     # prints standing rules + hot lessons
 ```
 
 Read the brief before you plan. It is the accumulated scar tissue of every previous
 mission in this repo and it frequently kills a plan you were about to make.
 
-Then write `.conclave/missions/<slug>/MISSION.md` — `conclave.py mission new "<name>"`
+Then write `.directorate/missions/<slug>/MISSION.md` — `directorate.py mission new "<name>"`
 scaffolds this file plus `PLAN.md`, `DECISIONS.md` and `reports/`; edit the generated
 stub rather than typing it by hand:
 
@@ -56,7 +56,7 @@ Checkable statements only. "npm run build passes", "no secrets in git history",
 ## Constraints
 Budget, stack, things that must not change, deploy targets, hard deadlines.
 ## Out of scope
-The list that stops the conclave from wandering. Be generous here.
+The list that stops the directorate from wandering. Be generous here.
 ## Risk register
 What could go irreversibly wrong. Anything here needs a human checkpoint.
 ```
@@ -77,9 +77,9 @@ BRIEF ──> PLAN ──> WAVE ──> VERIFY ──> ┬── pass ──> CH
 
 **PLAN.** Break the mission into waves. A wave is a set of work orders that can run in
 parallel because they touch disjoint files and don't depend on each other's output. Two
-agents editing the same file is the single most common way a conclave destroys its own
+agents editing the same file is the single most common way a directorate destroys its own
 work — enforce disjointness at plan time, not at merge time. Aim for 2–5 orders per wave.
-Write the plan to `.conclave/missions/<slug>/PLAN.md` so a crashed session can resume.
+Write the plan to `.directorate/missions/<slug>/PLAN.md` so a crashed session can resume.
 
 **WAVE.** Dispatch every order as a separate, foreground subagent call (a Task/Agent
 tool call, a nested CLI subprocess, whatever your environment provides), all in the same
@@ -88,7 +88,7 @@ agent to background execution, which silently breaks "orders finish together": y
 one completion, move to VERIFY, and never notice the rest was still running. Use the
 work-order envelope in `references/protocol.md` — an order without a stated verification
 command is not an order, it's a wish. Save each report verbatim to
-`.conclave/missions/<slug>/reports/<n.m>.md` as it comes in — that's what the directory
+`.directorate/missions/<slug>/reports/<n.m>.md` as it comes in — that's what the directory
 is for.
 
 **VERIFY.** Run the verification yourself. Then ask: does the diff match what the report
@@ -98,7 +98,7 @@ anything security-, money-, or data-loss-adjacent, send it to a red-team agent w
 the goal and not the solution.
 
 **CHECKPOINT.** On pass: `git add -A && git commit` with the wave number, then record the
-commit SHA in PLAN.md. This is your undo. A conclave without checkpoints cannot safely
+commit SHA in PLAN.md. This is your undo. A directorate without checkpoints cannot safely
 run unsupervised.
 
 **ROLLBACK.** All orders failed: `git reset --hard <last checkpoint>`. Some passed, some
@@ -112,7 +112,7 @@ Write the lesson, then re-dispatch only what failed, with the lesson attached.
 goes in:
 
 ```bash
-python .claude/skills/conclave/scripts/conclave.py lesson add \
+python .claude/skills/directorate/scripts/directorate.py lesson add \
   --tag security --severity high \
   --text "Service-role Supabase keys leak to the client if referenced in a Next.js client component; keep them in route handlers only."
 ```
@@ -158,7 +158,7 @@ with no obvious winner — run a divergence wave instead of jumping to a plan:
 3. Send all four proposals, stripped of authorship, to a judge agent who picks and
    justifies.
 4. You decide. Record the decision and the rejected alternatives in
-   `.conclave/missions/<slug>/DECISIONS.md` — future agents that don't know why an option
+   `.directorate/missions/<slug>/DECISIONS.md` — future agents that don't know why an option
    was rejected will helpfully re-propose it.
 
 Stances matter more than agent count. Four agents with the same stance produce one idea
@@ -166,7 +166,7 @@ four times.
 
 ## Autonomous / long-running mode
 
-When the user asks the conclave to keep going without supervision:
+When the user asks the directorate to keep going without supervision:
 
 - Re-read the brief at the top of every wave; the ledger will have grown.
 - Hard-stop at anything in the mission's risk register, or anything on the standard
@@ -178,12 +178,12 @@ When the user asks the conclave to keep going without supervision:
   digest, and a `HANDOFF.md` that lets the next session resume cold.
 - Two consecutive rolled-back waves on the same objective means the plan is wrong, not
   the agents. Stop, re-scope, and if the user is reachable, ask.
-- End every autonomous run with `conclave.py lesson digest` so the next run starts smarter.
+- End every autonomous run with `directorate.py lesson digest` so the next run starts smarter.
 
 ## Files this skill maintains
 
 ```
-.conclave/
+.directorate/
 ├── LESSONS.md            human-readable digest, regenerated by `lesson digest`
 ├── STANDING-RULES.md     promoted lessons; these are injected into every work order
 ├── ledger/lessons.jsonl  append-only raw record
@@ -192,7 +192,7 @@ When the user asks the conclave to keep going without supervision:
     └── reports/    one file per completed work order
 ```
 
-Commit `.conclave/` to the repo. It is the most valuable artifact the conclave produces —
+Commit `.directorate/` to the repo. It is the most valuable artifact the directorate produces —
 the code can be regenerated, the scar tissue can't.
 
 ## References

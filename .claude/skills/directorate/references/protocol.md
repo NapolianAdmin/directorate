@@ -14,7 +14,7 @@ Every dispatched agent gets exactly this. No freeform "please help with the auth
 ```markdown
 POST: <role from roster.md>
 WAVE: <n>  ORDER: <n.m>
-MISSION: <one line — the outcome the whole conclave is chasing>
+MISSION: <one line — the outcome the whole directorate is chasing>
 
 OBJECTIVE
 <One outcome. If you need the word "and", it is two orders.>
@@ -24,10 +24,10 @@ CONTEXT YOU NEED
 to go hunting will read forty files and burn your budget finding three.>
 
 STANDING RULES
-<paste .conclave/STANDING-RULES.md>
+<paste .directorate/STANDING-RULES.md>
 
 RELEVANT LESSONS
-<paste output of: conclave.py brief --tags <tags for this order>>
+<paste output of: directorate.py brief --tags <tags for this order>>
 
 BOUNDARIES
 - You may edit: <explicit file list or glob>
@@ -129,26 +129,33 @@ notices.
 - **All orders fail:** `git reset --hard <last checkpoint>` and re-plan the whole wave.
   Do not hand-repair.
 - **Some orders pass, some fail (the common case, not an edge case) — revert per order,
-  not per wave:** `git reset --hard` discards every order's diff, including the ones that
-  passed, because it resets the whole working tree. Do this instead, using only ordinary
-  git:
-  1. Commit the wave as-is once every order reports, *before* verifying: `git add -A &&
-     git commit -m "WIP wave <n>"`.
-  2. Verify each order against its own boundary and verification command.
-  3. For each order that failed, revert only its files:
-     `git checkout <last-good-checkpoint> -- <failing order's file list>`.
-  4. Re-commit: `git add -A && git commit -m "wave <n> checkpoint (order <n.m> reverted)"`.
-     This is now the checkpoint. Passing orders' work survives; only the failed order's
-     files went back to the prior checkpoint.
-  5. Re-dispatch only the failed order, with the lesson and its failed report attached —
+  not per wave, and never commit the failing content in the first place:** `git reset
+  --hard` discards every order's diff, including the ones that passed, because it resets
+  the whole working tree. Do this instead, using only ordinary git — and note step order:
+  verify *before* anything is committed, so a failing order's content (including any
+  secret it introduced) never enters git history at all, not even transiently:
+  1. Once every order reports, do **not** commit yet. Verify each order, in the dirty
+     working tree, against its own boundary and verification command (diff-vs-claim,
+     tests, the credential-string check above).
+  2. For each order that failed, revert only its files back to the last checkpoint —
+     straight from the uncommitted tree, no intermediate commit needed:
+     `git checkout HEAD -- <failing order's file list>`.
+  3. Commit what's left: `git add -A && git commit -m "wave <n> checkpoint (order <n.m>
+     reverted)"`. This is the checkpoint. Passing orders' work survives; the failed
+     order's files were never anything but the prior checkpoint's content, in git history
+     or out of it.
+  4. Re-dispatch only the failed order, with the lesson and its failed report attached —
      not the whole wave.
+  A committed-then-reverted secret is still reachable in git history via reflog until
+  explicitly rewritten; verifying before committing avoids the problem instead of cleaning
+  up after it.
 - Never roll back past a checkpoint that contains passing work from an unrelated wave.
 - `git reset --hard` (and the selective `git checkout` above) only undo the working tree.
   Neither undoes a side effect outside it — an API call already made, a migration already
   applied, a package already installed. If an order in the wave had one, note it before
   resetting; a clean `git status` after rollback does not mean the wave's effects are gone.
 - If the repo is dirty and you're unsure what's salvageable even at per-order granularity,
-  stash to a branch (`git switch -c conclave/wreck-<wave>`) before resetting. It costs
+  stash to a branch (`git switch -c directorate/wreck-<wave>`) before resetting. It costs
   nothing and occasionally saves an hour.
 - After every rollback, write the lesson **before** re-planning. Doing it afterwards
   means writing it from memory of a plan you've already replaced, and the lesson comes

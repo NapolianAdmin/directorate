@@ -1,11 +1,11 @@
 ---
-name: skill-forge
-description: Turn accumulated project knowledge into a new coding-agent skill file that loads itself automatically next time the topic comes up — not a memory note you have to ask for, a standing capability. Write it from a cluster of standing rules, lessons, a repeated workflow, or a correction the user keeps having to make. Use this skill whenever a conclave mission ends with lessons worth keeping, whenever the user wants a correction or preference to stick permanently instead of being repeated — "make this a skill", "remember how to do this", "stop making that mistake", "stop telling me the same thing every time" — or whenever you notice the same instruction being given for the third time. Also use when editing, splitting, or retiring an existing skill in .claude/skills/.
+name: lesson-forge
+description: Turn accumulated project knowledge into a new coding-agent skill file that loads itself automatically next time the topic comes up — not a memory note you have to ask for, a standing capability. Write it from a cluster of standing rules, lessons, a repeated workflow, or a correction the user keeps having to make. Use this skill whenever a directorate mission ends with lessons worth keeping, whenever the user wants a correction or preference to stick permanently instead of being repeated — "make this a skill", "remember how to do this", "stop making that mistake", "stop telling me the same thing every time" — or whenever you notice the same instruction being given for the third time. Also use when editing, splitting, or retiring an existing skill in .claude/skills/.
 license: MIT
-compatibility: Works with any coding agent that loads skills by matching a description against the current request — tested with Claude Code and OpenCode's native SKILL.md loaders.
+compatibility: Works with any coding agent that loads skills by matching a description against the current request — file placement verified against Claude Code's and OpenCode's own documented skill-loading paths (not yet confirmed in a live session of either).
 ---
 
-# Skill Forge
+# Lesson Forge
 
 The ledger remembers mistakes. This turns memory into competence — a mistake stops being
 something agents are warned about and becomes something they simply don't make, because
@@ -62,10 +62,10 @@ expired will confidently mislead an agent six months from now.
 
 ## After forging
 
-1. Delete the source rules from `.conclave/STANDING-RULES.md` — they're now loaded by the
+1. Delete the source rules from `.directorate/STANDING-RULES.md` — they're now loaded by the
    skill, and duplicating them means every work order carries text that's already in
    context.
-2. Note the promotion in `.conclave/LESSONS.md` so the trail is visible.
+2. Note the promotion in `.directorate/LESSONS.md` so the trail is visible.
 3. Test the trigger: start a fresh session, ask something that *should* summon it in the
    user's natural phrasing, and check it loads. If it doesn't, the description is the
    problem, not the body. Widen it with the phrasings a real person would use.
