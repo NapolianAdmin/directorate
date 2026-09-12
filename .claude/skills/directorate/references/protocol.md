@@ -16,18 +16,28 @@ POST: <role from roster.md>
 WAVE: <n>  ORDER: <n.m>
 MISSION: <one line — the outcome the whole directorate is chasing>
 
+RULES AND LESSONS FOR THIS WAVE
+<Paste ONE block: the output of `directorate.py brief --tags <union of every tag this
+wave's orders need>`, run once at wave-planning time, pasted byte-identical into every
+order. This output already is "rules + lessons" (see ledger.md) — never also separately
+paste STANDING-RULES.md; that repeats the same rules text twice inside one order. If two
+orders need different tags, paste the same superset into both — a block that differs
+between sibling orders in the same wave is a bug, not a feature.>
+
 OBJECTIVE
-<One outcome. If you need the word "and", it is two orders.>
+<One outcome. If you need the word "and", it is two orders. State the deliverable's
+concrete shape, not just the goal — a function signature, a file's required keys, a
+worked example of the output — the way you'd write an API contract. "Fix the bug in
+quote.ts" is a goal; "quote.ts's getQuote() returns { price, currency } and throws
+QuoteError on a 4xx from upstream" is a contract an agent can build to without guessing.
+Specification ambiguity, not coordination or verification, is the largest documented
+cause of multi-agent task failure — this field carries more weight than its length.>
 
 CONTEXT YOU NEED
-<Paths, prior decisions, interfaces already agreed. Be specific. An agent that has
-to go hunting will read forty files and burn your budget finding three.>
-
-STANDING RULES
-<paste .directorate/STANDING-RULES.md>
-
-RELEVANT LESSONS
-<paste output of: directorate.py brief --tags <tags for this order>>
+<Paths, prior decisions, interfaces already agreed. Be specific. For anything longer
+than ~200 words, give the file path and section instead of pasting it — the agent has
+Read access, and a lookup costs less than a bloated order. Paste only what's short
+enough that a lookup would cost more than the paste.>
 
 BOUNDARIES
 - You may edit: <explicit file list or glob>
@@ -51,6 +61,22 @@ if the file sets are disjoint. One agent that "helpfully" refactors a shared uti
 invalidates every other agent's work in the wave, and you won't find out until the merge.
 An agent that reports a needed change instead of making it costs you one extra order; an
 agent that makes it costs you the wave.
+
+**Why the rules-and-lessons block comes first, verbatim, every order.** Two reasons, not
+one. First: it was previously two separate pastes (STANDING-RULES.md, then `brief`'s own
+output) even though `brief` already bundles rules with lessons per its own documented
+behavior in `ledger.md` — that's the same text twice in one order, fixed by the single
+combined paste above. Second, and why it now sits first: prompt caching only reuses "the
+last block that stays identical across requests," measured from the start of the prompt —
+a block that's byte-identical across every order in a wave still can't be cached if
+order-specific text precedes it. Claude Code's Agent SDK caches subagent dispatches
+automatically (a dedicated TTL setting governs it), and a wave's orders fire in the same
+turn, well inside the default cache window — placed first, this block is positioned to
+be reused instead of re-billed per order. This needs roughly 1,024 tokens to be cacheable
+at all on Sonnet-class models; if a lean `brief` output runs shorter, fold in the POST's
+roster.md mandate text too. None of this changes correctness if caching doesn't fire on
+your platform — it only changes cost. Unconfirmed for OpenCode/Codex; treat as a
+Claude-Code-specific optimization until verified otherwise elsewhere.
 
 ---
 
@@ -83,6 +109,13 @@ warned about. One sentence, generalised beyond this specific file.>
 Pasted verification output is the load-bearing field. "Tests pass" is a claim; twelve
 lines of test runner output is evidence. Agents that summarise instead of pasting are
 usually agents that didn't run it.
+
+That load-bearing field is also the one to stop carrying forward once its wave is
+checkpointed. The report itself stays real, in full, at `reports/<n.m>.md` — but in your
+own working notes past that point, keep the STATUS, a one-line summary, and the file
+path, not the full body. Report bodies accumulating in context across many waves is the
+same unbounded growth a long single-agent session hits; the fix is the one Claude Code's
+own conversation compaction uses — summarize and point at the record, don't re-quote it.
 
 ---
 
@@ -179,7 +212,14 @@ notices.
   own subagent, so the two-tier rule is enforced by what an order's OBJECTIVE asks for,
   not by a tool restriction — do not give a worker-level order any reason to think hiring
   help is on the table.
-- Re-dispatching after a rollback: include the lesson and the failed attempt's report in
-  the new order. Agents given only the original order will reproduce the original bug
-  with striking fidelity.
+- Compute the RULES AND LESSONS block once per wave, not once per order — union the tags
+  every order needs, run `brief --tags <union>` a single time, paste that one string into
+  every order unchanged.
+- Re-dispatching after a rollback: include the lesson and a short failure digest — pull
+  it from the failed report's STATUS / WHAT I CHANGED / RISKS fields, a few lines, plus
+  the file path to the full report. Don't re-paste its full VERIFICATION OUTPUT block;
+  it's usually the longest part of the file, and the new agent needs to know what broke,
+  not re-read every check that already passed. Agents given only the original order
+  reproduce the original bug with striking fidelity; agents handed the entire prior
+  transcript spend tokens re-deriving what two lines would have told them directly.
 - A BLOCKED report is good news arriving early. Treat it as a successful order.

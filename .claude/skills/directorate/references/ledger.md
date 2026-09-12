@@ -53,7 +53,12 @@ One sentence. Two if the second one is the fix.
 ## Tier 2 — standing rules
 
 `.directorate/STANDING-RULES.md`. These go into **every** work order regardless of tag, so
-the bar is high: roughly a dozen rules total, never more than ~25.
+the bar is high: roughly a dozen rules total, never more than ~25. This isn't just
+document hygiene — every rule here is now also pasted into the RULES AND LESSONS block
+of every order in every wave (`references/protocol.md`), so an oversized file is a real,
+recurring token cost, not just noise. If a wave's `brief` output crosses the ~25 mark,
+that's the signal to run `lesson digest` and promote/prune *before* dispatching, not
+after.
 
 A lesson is promoted when it has recurred three times, or when it is severity `high` and
 would affect any agent in the repo. `directorate.py lesson digest` flags candidates; you

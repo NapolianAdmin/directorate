@@ -1,6 +1,6 @@
 ---
 name: directorate
-description: Run a multi-agent "company" inside a coding agent — a boss/chief agent that plans a mission, delegates work orders to specialist directors (architect, implementer, security auditor, red-team QA, market/domain researcher, cost economist, documentarian, integrator), who in turn delegate to their own worker agents, then verifies the results, checkpoints or rolls back on failure, and writes every mistake into a persistent lessons ledger that is injected into all future work orders. Use this skill whenever the user wants to build, refactor, harden, audit, research or ship anything non-trivial with multiple agents, wants several competing approaches worked up and compared before committing to one, mentions orchestration, subagents, "boss agent", swarms, agent teams, autonomous long-running builds, self-improving workflows, or asks for work to keep going in a loop without supervision — even if they never say the word "directorate".
+description: Run a multi-agent "company" inside a coding agent — a boss/chief agent that plans a mission, delegates work orders to specialist directors (architect, implementer, security auditor, red-team QA, scout, cost economist, documentarian, integrator), who in turn delegate to their own worker agents, then verifies the results, checkpoints or rolls back on failure, and writes every mistake into a persistent lessons ledger injected into all future work orders. Use whenever the user wants to build, refactor, harden, audit, research or ship anything non-trivial with multiple agents, wants several approaches compared before committing to one, mentions orchestration, subagents, "boss agent", swarms, agent teams, autonomous long-running builds, self-improving workflows, or asks for work to keep going without supervision — even if they never say "directorate". Do not use for a single-file fix, an analysis-only question, or when the user says not to use multiple agents.
 license: MIT
 compatibility: Works with any coding agent that can (a) spawn a separate agent/subprocess to do bounded work and read its result, and (b) run shell commands. File placement verified against Claude Code's and OpenCode's own documented skill-loading paths (not yet confirmed in a live session of either); for agents that only read AGENTS.md (e.g. Codex), see AGENTS.md at the repo root.
 ---
@@ -173,9 +173,14 @@ When the user asks the directorate to keep going without supervision:
   IRREVERSIBLE list — deploys, schema migrations on real data, spending money, publishing
   publicly, force pushes, deleting anything, production credentials — same list as a
   supervised mission, not a narrower one just because no one's watching. Stop and ask.
-- Track burn. Note tokens spent per wave in PLAN.md. When roughly 20% of budget remains,
-  stop starting new work and spend the remainder on: verification, documentation, ledger
-  digest, and a `HANDOFF.md` that lets the next session resume cold.
+- Track burn with real numbers, not a felt sense. On Claude Code: `count_tokens` before
+  dispatch to record each wave's predicted floor; after, pull the actual total from
+  `modelUsage` (whole-tree, includes subagents — `usage` alone undercounts once nesting
+  starts). PLAN.md's per-wave row gets both numbers. Unconfirmed whether OpenCode/Codex
+  expose the same fields — note "not measured, no equivalent found" there rather than a
+  guess. When roughly 20% of predicted budget remains, stop starting new work and spend
+  the remainder on: verification, documentation, ledger digest, and a `HANDOFF.md` that
+  lets the next session resume cold.
 - Two consecutive rolled-back waves on the same objective means the plan is wrong, not
   the agents. Stop, re-scope, and if the user is reachable, ask.
 - End every autonomous run with `directorate.py lesson digest` so the next run starts smarter.

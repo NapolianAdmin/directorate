@@ -152,6 +152,24 @@ without reading both.
 
 ---
 
+## BUDGET defaults by post type
+
+A work order's BUDGET field should cite one of these rather than inventing a number
+per order — deviate explicitly when a post's real scope doesn't fit:
+
+- **Research-shaped posts** (Scout and its delegates): a tool-call ceiling, not a diff
+  size — "under ~15 tool calls" for one narrow question, more only if the objective
+  genuinely spans several independent sub-questions.
+- **Code-editing posts** (Architect, Implementer, Integrator): a diff-size ceiling —
+  "under ~200 lines of diff" is the default; state a reason when a slice genuinely needs
+  more, rather than silently blowing past it.
+- **Audit posts** (Security Auditor, Red Team QA, Economist): unbounded reading, zero
+  writing — budget is about findings quality (real reproduction per top finding), not a
+  line or call count.
+
+These are starting defaults, not measured constants — adjust per project once real
+missions show what a post's orders actually cost.
+
 ## Composing a wave
 
 Sequence usually rhymes with: **Scout → Architect → [Implementers in parallel] →
