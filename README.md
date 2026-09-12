@@ -74,25 +74,33 @@ These aren't feature checkboxes — they're mechanisms you can go read in each p
 own docs. Where a comparable project does something genuinely better, it's marked as
 such rather than smoothed over.
 
-| Mechanism | **directorate** | [conclave](https://github.com/tommasinigiovanni/conclave) | [agent-teams](https://github.com/wshobson/agents) | [oh-my-claudecode](https://github.com/Yeachan-Heo/oh-my-claudecode) |
-|---|---|---|---|---|
-| Memory across separate runs | Lessons ledger → standing rules → generated skills, injected into every future work order | Per-model win-rate stats — tracks *who* tends to win, not *why* something failed | Not described — each team spins up fresh | Skill extraction is opt-in; uncommitted project skills are lost when their worktree is deleted |
-| Rollback on failure | Per-order git revert within a wave — passing orders are kept, only the failed order's files are reverted | N/A — no code mutation, it's a debate tool | Not described — failure handling shown is task reassignment, not code revert | Not git-based — retries and iterates until checks pass |
-| Verification standard | Chief re-runs the verification command itself and diffs the code against the report's claim | Models critique each other's reasoning — no ground-truth check | Reviewer/debugger agents produce findings for the lead to synthesize | Explicitly notes the loop doesn't independently run commands — evidence must be surfaced in-session |
-| Independent second opinion | Same-vendor agents, different assigned stances | **Different LLM vendors entirely** — a real edge for genuine independence | Same-vendor, different review dimension | Cross-CLI advisor synthesis |
-| Platform coverage | Claude Code + OpenCode natively, Codex + 20 others via AGENTS.md, one codebase | Claude Code skill; calls whatever model APIs you configure separately | Claude Code only, behind an experimental feature flag | Claude Code first; a separate sister repo covers Codex; no OpenCode |
-| Install footprint | git + Python 3.9+ **stdlib only** + the coding agent you already have | Python 3.10+, one dependency, plus your own bill for 2+ extra model APIs | Plugin install + experimental flag + tmux/iTerm2 | npm + native addon + tmux, optionally up to 4 paid provider CLIs |
-| Coordination substrate | Prose convention over the host's Task/Agent tool | N/A — single script, no delegation | **Native** — real tracked team/task tool state | Native for its Team mode; its own tmux-pane runtime for cross-CLI work |
+| Mechanism | **directorate** | [conclave](https://github.com/tommasinigiovanni/conclave) | [agent-teams](https://github.com/wshobson/agents) | [oh-my-claudecode](https://github.com/Yeachan-Heo/oh-my-claudecode) | [superpowers](https://github.com/obra/superpowers) |
+|---|---|---|---|---|---|
+| Memory across separate runs | Lessons ledger → standing rules → generated skills, injected into every future work order | Per-model win-rate stats — tracks *who* tends to win, not *why* something failed | Not described — each team spins up fresh | Skill extraction is opt-in; uncommitted project skills are lost when their worktree is deleted | Not described — skills are static reference material, not written to by the agent; no cross-session ledger |
+| Rollback on failure | Per-order git revert within a wave — passing orders are kept, only the failed order's files are reverted | N/A — no code mutation, it's a debate tool | Not described — failure handling shown is task reassignment, not code revert | Not git-based — retries and iterates until checks pass | Git-worktree isolation keeps a failing task off `main`, but no described mechanism for reverting one slice of a multi-task run while keeping the rest |
+| Verification standard | Chief re-runs the verification command itself and diffs the code against the report's claim | Models critique each other's reasoning — no ground-truth check | Reviewer/debugger agents produce findings for the lead to synthesize | Explicitly notes the loop doesn't independently run commands — evidence must be surfaced in-session | **Enforced red-green-refactor TDD plus a two-stage fresh-subagent review** (spec-compliance, then code-quality) — a real, specific discipline nothing else in this row has an equivalent for |
+| Independent second opinion | Same-vendor agents, different assigned stances | **Different LLM vendors entirely** — a real edge for genuine independence | Same-vendor, different review dimension | Cross-CLI advisor synthesis | Same-vendor, sequential fresh subagents — a stage difference (spec, then quality), not a stance difference |
+| Platform coverage | Claude Code + OpenCode natively, Codex + 20 others via AGENTS.md, one shared codebase | Claude Code skill; calls whatever model APIs you configure separately | Claude Code only, behind an experimental feature flag | Claude Code first; a separate sister repo covers Codex; no OpenCode | **14 agent harnesses** — broadest raw coverage here, at the cost of a separate install per harness instead of one shared codebase |
+| Install footprint | git + Python 3.9+ **stdlib only** + the coding agent you already have | Python 3.10+, one dependency, plus your own bill for 2+ extra model APIs | Plugin install + experimental flag + tmux/iTerm2 | npm + native addon + tmux, optionally up to 4 paid provider CLIs | No script of its own to run; installed per harness via that harness's own plugin/extension mechanism |
+| Coordination substrate | Prose convention over the host's Task/Agent tool | N/A — single script, no delegation | **Native** — real tracked team/task tool state | Native for its Team mode; its own tmux-pane runtime for cross-CLI work | Prose convention over the host's own Task tool ("subagent-driven-development") — same layer as directorate, not native state |
 
-Two things worth saying plainly rather than burying: conclave's cross-*vendor* debate is
+Three things worth saying plainly rather than burying: conclave's cross-*vendor* debate is
 a more genuinely independent second opinion than directorate's same-vendor brainstorming
-wave, and agent-teams' native tool-tracked state is more platform-enforced than
-directorate's convention-enforced two-tier limit — see [Design notes](#design-notes) for
-what that trade actually costs. directorate's bet is scope and portability: no cross-model
-debate, no bespoke platform feature required, but the only one of the four here with a
-rollback that survives *partial* wave failure, a memory that compounds from failures
-across missions rather than from votes or manual extraction, and a footprint that adds
-nothing beyond git and a Python your project already has.
+wave; agent-teams' native tool-tracked state is more platform-enforced than directorate's
+convention-enforced two-tier limit; and superpowers' enforced TDD discipline is a harder
+floor for the one thing it checks (a failing test existed before the code that passes it)
+than directorate's diff-vs-claim read ever guarantees on its own — see
+[Design notes](#design-notes) for what these trades actually cost. directorate's bet is
+scope and portability: no cross-model debate, no enforced TDD, no bespoke platform feature
+required, but the only one of the five here with a rollback that survives *partial* wave
+failure, and a memory that compounds from failures across missions rather than from votes,
+manual extraction, or nothing at all.
+
+Said plainly rather than left for a reader to notice: superpowers has roughly 285,000
+GitHub stars and real multi-harness production use; this project is a same-day, single-
+author repo with none of that track record yet. The comparison above is mechanism-by-
+mechanism — specific things each project's own docs do and don't describe — not a claim
+that directorate has caught up to a project an order of magnitude more battle-tested.
 
 ## Install
 
@@ -216,7 +224,9 @@ automatically. A mistake is loud once, then a whisper, then ambient competence.
   defeats the cache even when the block itself never changes.
 - **Human gates are non-negotiable.** Deploys, migrations on real data, spending money,
   publishing, deleting. Autonomy stops there — enforced by the Chief choosing to stop,
-  not by a tool permission. Treat the mission's risk register as the actual gate.
+  not by a tool permission. Treat the mission's risk register as the actual gate. For
+  mechanical, runtime-enforced gating of individual tool calls rather than mission-level
+  actions, see the GateGuard entry in the [FAQ](#faq).
 - **`git add -A` stages everything, not just the order's boundary.** Check for anything
   credential-shaped before a checkpoint commit — a `.env`, a key pasted into a fixture.
 - **Fewer, better lessons.** Two hundred lessons means no lessons, because nothing gets
@@ -255,9 +265,23 @@ free as prompt caching allows — see [Design notes](#design-notes) — but the 
 of spinning up a subagent at all is real and roughly size-invariant, so a wave of many
 trivial orders is not proportionally cheap.
 
-**How is this different from [conclave / agent-teams / oh-my-claudecode]?** See
-[Why directorate?](#why-directorate) above for a mechanism-by-mechanism comparison,
+**How is this different from [conclave / agent-teams / oh-my-claudecode / superpowers]?**
+See [Why directorate?](#why-directorate) above for a mechanism-by-mechanism comparison,
 including where each of those is genuinely better at something specific.
+
+**What about hook-based tools like GateGuard?** Different layer, not a competing answer
+to the same question. [GateGuard](https://github.com/zunoworks/gateguard) is a Claude
+Code `PreToolUse` hook that mechanically blocks an Edit/Write/Bash call until the agent
+presents concrete facts — who calls this, does it already exist, what's the data shape —
+enforced by the runtime before the tool call executes, the same way a linter blocks a
+commit. directorate's own human gates (the IRREVERSIBLE list, the mission's risk register)
+are enforced by the Chief choosing to stop, which is a convention this document asks you
+to follow, not a runtime permission a hook can refuse regardless of what the Chief decides.
+These compose rather than compete: a hook gates *every* tool call at the file-edit level
+no matter what skill is running; directorate gates *mission-level* irreversible actions
+and, unlike a hook, also plans, dispatches, and remembers across missions. If the small,
+frequent gate needs to be as mechanically enforced as the mission-level one, pair the two
+instead of picking.
 
 ## Boundaries
 
