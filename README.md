@@ -100,10 +100,11 @@ failure, and a memory that compounds from failures across missions rather than f
 manual extraction, or nothing at all.
 
 Said plainly rather than left for a reader to notice: superpowers has roughly 285,000
-GitHub stars and real multi-harness production use; this project is a same-day, single-
-author repo with none of that track record yet. The comparison above is mechanism-by-
-mechanism — specific things each project's own docs do and don't describe — not a claim
-that directorate has caught up to a project an order of magnitude more battle-tested.
+GitHub stars and real multi-harness production use; this project is a same-day,
+single-author repo with none of that track record yet. The comparison above is
+mechanism-by-mechanism — specific things each project's own docs do and don't describe —
+not a claim that directorate has caught up to a project an order of magnitude more
+battle-tested.
 
 ## Install
 
@@ -262,9 +263,9 @@ exist as posts *with their own mandate*, not as the Chief double-checking itself
 tasks — see "Before opening a directorate" in `SKILL.md`. Multi-agent runs have been
 measured at roughly 15x the tokens of a single-agent chat interaction for comparable
 work; the trade only pays for itself when there's real parallel surface or the run has
-to survive unsupervised. The work-order envelope is written to make the *recurring* per-
-order costs (repeated rules/lessons pastes, full report re-pastes on retry) as close to
-free as prompt caching allows — see [Design notes](#design-notes) — but the *fixed* cost
+to survive unsupervised. The work-order envelope is written to make the *recurring*
+per-order costs (repeated rules/lessons pastes, full report re-pastes on retry) as close
+to free as prompt caching allows — see [Design notes](#design-notes) — but the *fixed* cost
 of spinning up a subagent at all is real and roughly size-invariant, so a wave of many
 trivial orders is not proportionally cheap.
 
