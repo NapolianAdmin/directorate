@@ -1,0 +1,8 @@
+{
+  "name": "directorate",
+  "description": "Multi-agent orchestration for coding agents: a boss/chief agent plans a mission, delegates work orders to specialist directors, verifies every report against the actual diff, checkpoints or rolls back on failure, and writes every mistake into a persistent lessons ledger. Includes lesson-forge for turning accumulated lessons into new, auto-loading skills.",
+  "version": "1.0.0",
+  "license": "MIT",
+  "keywords": ["orchestration", "multi-agent", "subagents", "autonomous", "self-improving", "directorate"],
+  "skills": ["./.claude/skills/"]
+}
