@@ -1,5 +1,52 @@
 # Changelog
 
+## Comparison update + first live-session verification
+
+Two separate follow-ups after the initial public hardening pass: an honest comparison
+against two more real projects, and — for the first time — an actual live test of the
+one claim that had previously been checked against documentation only.
+
+### Added: superpowers and GateGuard to the comparison
+
+[obra/superpowers](https://github.com/obra/superpowers) (285,465 stars, confirmed via the
+GitHub API directly, not an agent's summary) is the largest project in this space and
+wasn't previously named in the README's comparison table — a gap flagged by this
+project's own earlier research. Added as a full column: credited where it's genuinely
+ahead (enforced red-green-refactor TDD, 14 supported agent harnesses), gapped honestly
+where its own README doesn't describe a mechanism (no cross-session memory, no described
+partial-wave rollback). [zunoworks/gateguard](https://github.com/zunoworks/gateguard) is a
+different category — a Claude Code `PreToolUse` hook, not an orchestration framework — so
+it's addressed in a new FAQ entry instead of a table row: it mechanically enforces its
+gate at the runtime level (this exact hook gated this project's own Bash/Edit/Write calls
+throughout its development), where directorate's human gates are enforced by the Chief
+choosing to stop. Stated as a real gap with a pairing recommendation, not smoothed over.
+
+### Confirmed live: the skill actually auto-triggers in Claude Code
+
+Every previous claim about Claude Code compatibility had been checked against Claude
+Code's own documentation, never against an actual session — stated plainly in the README
+as an open gap. Closed one part of that gap for real: a fresh, independent,
+non-interactive `claude -p` session (no prior context, "directorate" never mentioned) was
+given a copy of this repo's own published skill files plus a natural task description
+built from the skill description's own trigger vocabulary — "a boss agent that plans the
+work, delegates to specialist sub-agents, verifies what they report, checkpoints, rolls
+back on failure, keeps going without supervision." The session correctly identified and
+loaded the `directorate` skill and quoted its trigger description back verbatim, matching
+the published `SKILL.md` exactly.
+
+What this confirms: the description field does what it claims — a real Claude Code
+session matches natural task language to it without the skill being named. What it
+doesn't confirm: a second, deeper test — having that same live session actually execute
+`directorate.py init`/`brief` as its first real action — was attempted and stopped after
+hitting a legitimate permission boundary (`acceptEdits` mode doesn't cover Bash execution,
+and escalating further was itself blocked by the outer environment's own permission
+classifier). Not routed around; the CLI script itself was already verified independently,
+multiple times, via direct invocation (see "Checked and found already correct" below), so
+the residual gap is small: whether a live agent reliably executes the literal bash block
+`SKILL.md` already instructs it to run, which it had just quoted back correctly.
+
+OpenCode and Codex remain unconfirmed live — only Claude Code was tested this pass.
+
 ## Cross-platform hardening pass
 
 This package started as a Claude-Code-specific skill, was generalized for Claude Code,
@@ -122,7 +169,10 @@ trail is honest about what didn't need fixing, not just what did:
   currently populated with a copy of this skill — the AGENTS.md pointer is the only
   confirmed path for Codex today. Revisit once the underlying finding is re-verified
   against a raw source or an actual Codex session.
-- Nothing in this package has been confirmed in a live session of Claude Code, OpenCode,
-  or Codex yet — every cross-platform claim is checked against each platform's current
-  documentation, not against an actual run. This is stated plainly in the README now
-  rather than implied to be settled.
+- OpenCode and Codex are still unconfirmed in a live session — only Claude Code's
+  auto-trigger has now been tested for real (see "Confirmed live" above). Every
+  OpenCode/Codex claim is still checked against documentation only.
+- The live Claude Code test confirmed triggering, not a full mission end to end — no
+  live session has yet run a real wave (dispatch, verify, checkpoint/rollback) start to
+  finish. The CLI commands underneath each step are independently verified; the
+  live-agent behavior of actually calling them in sequence during a real mission isn't.

@@ -22,9 +22,12 @@ one), not a number the tooling computes.
 > [!IMPORTANT]
 > This documents a designed and tested process, not a certified guarantee. Every
 > mechanism below has been checked against real, current documentation and, where noted,
-> verified in a real run — but nothing here has been confirmed in a live session of
-> Claude Code, OpenCode, or Codex specifically. Test in your own agent and model before
-> depending on it for anything irreversible. See [Boundaries](#boundaries).
+> verified in a real run. The skill's auto-trigger has been confirmed in a live,
+> independent Claude Code session — a natural-language prompt using the description's own
+> trigger words, with the skill never named, correctly loaded `directorate` (see
+> [CHANGELOG.md](CHANGELOG.md)). OpenCode and Codex are still unconfirmed live, and no
+> live session has yet run a full mission end to end. Test in your own agent and model
+> before depending on it for anything irreversible. See [Boundaries](#boundaries).
 
 ## Contents
 
